@@ -32,7 +32,6 @@ void
 babysit(const char* myname, const char* file, char* const argv[], int i)
 {
   msec_t now = get_msecs();
-
   assert(now > flapping_ms);
   if ( now - times[i % flappingrestarts] < flapping_ms ) {
     fprintf(stderr, TIME_FMT " [%s] %s flapping - %d restarts in %llums\n",
@@ -41,6 +40,7 @@ babysit(const char* myname, const char* file, char* const argv[], int i)
     exit(-1);
   }
   times[i % flappingrestarts] = now;
+
   fprintf(stderr, TIME_FMT " [%s] Starting %s (%d)\n", now, myname, file, i);
   {
     pid_t pid = fork();
@@ -77,7 +77,6 @@ main(int argc, char *argv[])
 {
   char* path;
   char** args;
-
   if ( argc < 2 ) {
     usage(argv[0]);
     exit(1);
@@ -91,9 +90,7 @@ main(int argc, char *argv[])
     }
   }
   args[argc - 1] = NULL;
-
   times = calloc(flappingrestarts, sizeof(msec_t));
-
   babysit(argv[0], path, args, 0);
 
   free(args);
