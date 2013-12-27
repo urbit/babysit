@@ -40,7 +40,7 @@ babysit(const char* myname, const char* file, char* const argv[], int i)
         exit(-1);
       }
     }
-    else {
+    else if ( pid > 0 ) {
       int stat;
       if ( -1 == waitpid(pid, &stat, 0) ) {
         if ( errno == ECHILD ) {
@@ -54,6 +54,10 @@ babysit(const char* myname, const char* file, char* const argv[], int i)
       else {
         babysit(myname, file, argv, i + 1);
       }
+    }
+    else {
+      perror("fork");
+      exit(-1);
     }
   }
 }
