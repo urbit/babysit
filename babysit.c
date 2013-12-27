@@ -75,13 +75,11 @@ babysit(const char* myname, const char* file, char* const argv[], int i)
 int
 main(int argc, char *argv[])
 {
-  char* path;
   char** args;
   if ( argc < 2 ) {
     usage(argv[0]);
     exit(1);
   }
-  path = argv[1];
   args = malloc(sizeof(char*) * argc);
   {
     int i;
@@ -91,7 +89,7 @@ main(int argc, char *argv[])
   }
   args[argc - 1] = NULL;
   times = calloc(flappingrestarts, sizeof(msec_t));
-  babysit(argv[0], path, args, 0);
+  babysit(argv[0], argv[1], args, 0);
 
   free(args);
   free(times);
