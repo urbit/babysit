@@ -3,9 +3,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <sys/time.h>
+#include <sys/wait.h>
 #include <unistd.h>
 
-typedef unsigned long long msec_t;
+typedef unsigned long msec_t;
 
 #include "config.h"
 
@@ -17,7 +18,7 @@ usage(const char* myname)
   fprintf(stderr, "usage: %s <file> [args]\n", myname);
   fprintf(stderr, "config:\n");
   fprintf(stderr, "  restarts:  %d\n", flappingrestarts);
-  fprintf(stderr, "  seconds:   %llu\n", flapping_ms / 1000);
+  fprintf(stderr, "  seconds:   %lu\n", flapping_ms / 1000);
 }
 
 msec_t
@@ -34,7 +35,7 @@ babysit(const char* myname, const char* file, char* const argv[], int i)
   msec_t now = get_msecs();
   assert(now > flapping_ms);
   if ( now - times[i % flappingrestarts] < flapping_ms ) {
-    fprintf(stderr, TIME_FMT " [%s] %s flapping - %d restarts in %llums\n",
+    fprintf(stderr, TIME_FMT " [%s] %s flapping - %d restarts in %lums\n",
                     now, myname, file, flappingrestarts,
                     now - times[i % flappingrestarts]);
     exit(-1);
