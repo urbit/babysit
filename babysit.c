@@ -5,11 +5,20 @@
 #include <sys/time.h>
 #include <unistd.h>
 
-typedef long long msec_t;
+typedef unsigned long long msec_t;
 
 #include "config.h"
 
 static msec_t* times;
+
+void
+usage(const char* myname)
+{
+  fprintf(stderr, "usage: %s <file> [args]\n", myname);
+  fprintf(stderr, "config:\n");
+  fprintf(stderr, "  restarts:  %d\n", flappingrestarts);
+  fprintf(stderr, "  seconds:   %llu\n", flapping_ms / 1000);
+}
 
 msec_t
 get_msecs()
@@ -26,12 +35,13 @@ babysit(const char* myname, const char* file, char* const argv[], int i)
 
   assert(now > flapping_ms);
   if ( now - times[i % flappingrestarts] < flapping_ms ) {
-    fprintf(stderr, "[%s] %s flapping - %d restarts in %lldms\n",
-            myname, file, flappingrestarts, now - times[i % flappingrestarts]);
+    fprintf(stderr, TIME_FMT " [%s] %s flapping - %d restarts in %llums\n",
+                    now, myname, file, flappingrestarts,
+                    now - times[i % flappingrestarts]);
     exit(-1);
   }
   times[i % flappingrestarts] = now;
-  fprintf(stderr, "[%s] Starting %s (%d)\n", myname, file, i);
+  fprintf(stderr, TIME_FMT " [%s] Starting %s (%d)\n", now, myname, file, i);
   {
     pid_t pid = fork();
     if ( pid == 0 ) {
@@ -60,12 +70,6 @@ babysit(const char* myname, const char* file, char* const argv[], int i)
       exit(-1);
     }
   }
-}
-
-void
-usage(const char* myname)
-{
-  fprintf(stderr, "usage: %s <file> [args]\n", myname);
 }
 
 int
