@@ -1,0 +1,9 @@
+babysit - conservative task autorestarter
+=========================================
+babysit forks and execs the given (assumed to be long-lived) task and
+restarts it if it dies. If the task dies too many times in an interval,
+babysit gives up.
+
+Installation
+------------
+Edit config.mk to match your local setup. make and (sudo) make install.
