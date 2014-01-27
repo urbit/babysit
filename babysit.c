@@ -4,17 +4,20 @@
 #include <stdio.h>
 #include <stdint.h>
 #include <stdlib.h>
-#include <string.h>
 #include <sys/time.h>
 #include <sys/wait.h>
 #include <unistd.h>
 
+#include "arg.h"
+#include "estrtol.h"
+
 #include "config.h"
+
+char* argv0;
 
 static uint64_t* times;
 static uint32_t restarts;
 static uint64_t interval;
-static char* argv0;
 static char* file;
 static char** args;
 
@@ -101,46 +104,26 @@ babysit(uint32_t i)
 int
 main(int argc, char *argv[])
 {
-  char *optarg;
-  char flag;
-
-  argv0 = *argv++;
-  if ( argc < 2 ) {
-    usage();
-  }
-  argc--;
-
   restarts = crestarts;
   interval = cinterval;
 
-  while ( argv[0][0] == '-' && argc > 1 ) {
-    if ( strlen(argv[0]) != 2 ) {
-      usage();
-    }
-    flag = argv[0][1];
-    optarg = argv[1];
+  ARGBEGIN {
+    case 'i':
+      interval = estrtol(EARGF(usage()), 0);
+      break;
+    case 'r':
+      restarts = estrtol(EARGF(usage()), 0);
+      break;
+    default: usage();
+  } ARGEND;
 
-    argv += 2;
-    argc -= 2;
-
-    switch ( flag ) {
-      default: {
-        fprintf(stderr, "Unknown option %c\n", flag);
-        usage();
-      }
-      case 'r': {
-        restarts = atol(optarg);
-        break;
-      }
-      case 'i': {
-        interval = atol(optarg);
-      }
-    }
-    fprintf(stderr, "argc:%d argv:%s\n", argc, *argv);
-  }
-
-  if ( restarts < 1 || interval < 1 || argc < 1 ) {
+  if ( argc < 1 ) {
+    fprintf(stderr, "Filename not supplied.\n");
     usage();
+  }
+  if ( restarts < 1 ) {
+    fprintf(stderr, "Giving up after 0 restarts...\n");
+    exit(2);
   }
 
   file = *argv;
