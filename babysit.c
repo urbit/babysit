@@ -9,7 +9,6 @@
 #include <unistd.h>
 
 #include "arg.h"
-#include "estrtol.h"
 
 #include "config.h"
 
@@ -109,10 +108,10 @@ main(int argc, char *argv[])
 
   ARGBEGIN {
     case 'i':
-      interval = estrtol(EARGF(usage()), 0);
+      interval = atol(EARGF(usage()));
       break;
     case 'r':
-      restarts = estrtol(EARGF(usage()), 0);
+      restarts = atol(EARGF(usage()));
       break;
     default: usage();
   } ARGEND;
