@@ -1,6 +1,6 @@
 include config.mk
 
-SRC = babysit.c estrtol.c
+SRC = babysit.c
 OBJ = ${SRC:.c=.o}
 
 all: options babysit

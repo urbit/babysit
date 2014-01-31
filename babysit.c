@@ -40,19 +40,19 @@ get_msecs()
 }
 
 static void
-vlog(uint64_t now, const char* fmt, va_list ap)
+vblog(uint64_t now, const char* fmt, va_list ap)
 {
   fprintf(stderr, "%14llu [%s]: ", now, argv0);
   vfprintf(stderr, fmt, ap);
 }
 
 static void
-log(uint64_t now, const char* fmt, ...)
+blog(uint64_t now, const char* fmt, ...)
 {
   va_list ap;
 
   va_start(ap, fmt);
-  vlog(now, fmt, ap);
+  vblog(now, fmt, ap);
   va_end(ap);
 }
 
@@ -63,12 +63,12 @@ babysit(uint32_t i)
   assert(now > interval * 1000L);
   i = i % restarts;
   if ( now - times[i % restarts] < interval * 1000L ) {
-    log(now, "%s flapping - %d restarts in %lums\n",
-             file, restarts, now - times[i]);
+    blog(now, "%s flapping - %d restarts in %lums\n",
+              file, restarts, now - times[i]);
     exit(2);
   }
   times[i] = now;
-  log(now, "Starting %s (%d)\n", file, i);
+  blog(now, "Starting %s (%d)\n", file, i);
 
   {
     pid_t pid = fork();
