@@ -1,10 +1,12 @@
 #include <assert.h>
 #include <errno.h>
+#include <inttypes.h>
 #include <stdarg.h>
 #include <stdio.h>
 #include <stdint.h>
 #include <stdlib.h>
 #include <sys/time.h>
+#include <sys/types.h>
 #include <sys/wait.h>
 #include <unistd.h>
 
@@ -45,7 +47,7 @@ vblog(uint64_t now, const char* fmt, va_list ap)
   char buf[2048];
   int r;
 
-  r = snprintf(buf, 2048, "%14llu [%s]: ", now, argv0);
+  r = snprintf(buf, 2048, "%14" PRIu64 " [%s]: ", now, argv0);
   assert(r > 0 && r < 2048);
   vsnprintf(buf + r, 2048 - r, fmt, ap);
   fprintf(stderr, "%s\n", buf);
