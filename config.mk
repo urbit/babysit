@@ -3,7 +3,7 @@ PREFIX = /usr/local
 INCS = -I. -I/usr/include
 LIBS = -L/usr/lib -lc
 
-CFLAGS = -Wall -pedantic -std=c99 -O0 -g ${INCS}
+CFLAGS = -O0 -g -Wall -Wextra -Werror -pedantic -std=c99 ${INCS}
 LDFLAGS = ${LIBS}
 
 CC = cc
