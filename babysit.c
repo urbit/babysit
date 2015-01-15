@@ -27,8 +27,8 @@ usage(void)
 {
   fprintf(stderr, "usage: %s [opts] <file> [file-args]\n"
                   "opts:\n"
-                  "-r <restarts> restarts per interval [default: %u]\n"
-                  "-i <interval> flapping interval [default: %u]\n",
+                  "-r <restarts> restarts per interval [default: %" PRIu32 "]\n"
+                  "-i <interval> flapping interval [default: %" PRIu32 "]\n",
                   argv0, crestarts, cinterval);
   exit(1);
 }
