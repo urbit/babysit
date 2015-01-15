@@ -2,6 +2,7 @@ include config.mk
 
 SRC = babysit.c
 OBJ = ${SRC:.c=.o}
+CORE = .MAKEFILE-VERSION
 
 all: options babysit
 
@@ -11,11 +12,15 @@ options:
 	@echo "LDFLAGS  = ${LDFLAGS}"
 	@echo "CC       = ${CC}"
 
+.MAKEFILE-VERSION: Makefile config.mk
+	@echo Makefile update.
+	@touch .MAKEFILE-VERSION
+
 .c.o:
 	@echo CC $<
 	@${CC} -c ${CFLAGS} $<
 
-${OBJ}: config.h
+${OBJ}: config.h ${CORE}
 
 config.h:
 	@echo creating $@ from config.def.h
