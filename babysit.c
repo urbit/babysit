@@ -143,7 +143,7 @@ main(int argc, char *argv[])
   }
   args[argc] = NULL;
 
-  times = calloc(restarts, sizeof(uint64_t));
+  times = calloc(restarts, sizeof *times);
   babysit(0);
 
   free(args);
