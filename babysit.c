@@ -1,10 +1,12 @@
 #include <assert.h>
 #include <errno.h>
+#include <inttypes.h>
 #include <stdarg.h>
 #include <stdio.h>
 #include <stdint.h>
 #include <stdlib.h>
 #include <sys/time.h>
+#include <sys/types.h>
 #include <sys/wait.h>
 #include <unistd.h>
 
@@ -21,20 +23,21 @@ static char* file;
 static char** args;
 
 static void
-usage()
+usage(void)
 {
   fprintf(stderr, "usage: %s [opts] <file> [file-args]\n"
                   "opts:\n"
-                  "-r <restarts> restarts per interval [default: %u]\n"
-                  "-i <interval> flapping interval [default: %u]\n",
+                  "-r <restarts> restarts per interval [default: %" PRIu32 "]\n"
+                  "-i <interval> flapping interval [default: %" PRIu32 "]\n",
                   argv0, crestarts, cinterval);
   exit(1);
 }
 
 static uint64_t
-get_msecs()
+get_msecs(void)
 {
   struct timeval tm;
+
   gettimeofday(&tm, NULL);
   return tm.tv_sec * 1000 + tm.tv_usec / 1000;
 }
@@ -45,9 +48,12 @@ vblog(uint64_t now, const char* fmt, va_list ap)
   char buf[2048];
   int r;
 
-  r = snprintf(buf, 2048, "%14llu [%s]: ", now, argv0);
-  assert(r > 0 && r < 2048);
-  vsnprintf(buf + r, 2048 - r, fmt, ap);
+  r = snprintf(buf, sizeof buf, "%14" PRIu64 " [%s]: ", now, argv0);
+  if ( r < 0 ) {
+    perror("snprintf");
+    exit(2);
+  }
+  vsnprintf(buf + r, sizeof buf - r, fmt, ap);
   fprintf(stderr, "%s\n", buf);
 }
 
@@ -65,14 +71,14 @@ static void
 babysit(uint32_t i)
 {
   uint64_t now = get_msecs();
+  uint32_t buc = i % restarts;
   assert(now > interval * 1000L);
-  i = i % restarts;
-  if ( now - times[i % restarts] < interval * 1000L ) {
+  if ( now - times[buc] < interval * 1000L ) {
     blog(now, "%s flapping - %d restarts in %lums",
-              file, restarts, now - times[i]);
+              file, restarts, now - times[buc]);
     exit(2);
   }
-  times[i] = now;
+  times[buc] = now;
   blog(now, "Starting %s (%d)", file, i);
 
   {
@@ -140,7 +146,7 @@ main(int argc, char *argv[])
   }
   args[argc] = NULL;
 
-  times = calloc(restarts, sizeof(uint64_t));
+  times = calloc(restarts, sizeof *times);
   babysit(0);
 
   free(args);
