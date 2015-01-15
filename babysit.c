@@ -23,7 +23,7 @@ static char* file;
 static char** args;
 
 static void
-usage()
+usage(void)
 {
   fprintf(stderr, "usage: %s [opts] <file> [file-args]\n"
                   "opts:\n"
@@ -34,7 +34,7 @@ usage()
 }
 
 static uint64_t
-get_msecs()
+get_msecs(void)
 {
   struct timeval tm;
 
