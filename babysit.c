@@ -48,9 +48,12 @@ vblog(uint64_t now, const char* fmt, va_list ap)
   char buf[2048];
   int r;
 
-  r = snprintf(buf, 2048, "%14" PRIu64 " [%s]: ", now, argv0);
-  assert(r > 0 && r < 2048);
-  vsnprintf(buf + r, 2048 - r, fmt, ap);
+  r = snprintf(buf, sizeof buf, "%14" PRIu64 " [%s]: ", now, argv0);
+  if ( r < 0 ) {
+    perror("snprintf");
+    exit(2);
+  }
+  vsnprintf(buf + r, sizeof buf - r, fmt, ap);
   fprintf(stderr, "%s\n", buf);
 }
 
