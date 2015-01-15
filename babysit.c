@@ -37,6 +37,7 @@ static uint64_t
 get_msecs()
 {
   struct timeval tm;
+
   gettimeofday(&tm, NULL);
   return tm.tv_sec * 1000 + tm.tv_usec / 1000;
 }
