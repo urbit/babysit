@@ -68,14 +68,14 @@ static void
 babysit(uint32_t i)
 {
   uint64_t now = get_msecs();
+  uint32_t buc = i % restarts;
   assert(now > interval * 1000L);
-  i = i % restarts;
-  if ( now - times[i % restarts] < interval * 1000L ) {
+  if ( now - times[buc] < interval * 1000L ) {
     blog(now, "%s flapping - %d restarts in %lums",
-              file, restarts, now - times[i]);
+              file, restarts, now - times[buc]);
     exit(2);
   }
-  times[i] = now;
+  times[buc] = now;
   blog(now, "Starting %s (%d)", file, i);
 
   {
